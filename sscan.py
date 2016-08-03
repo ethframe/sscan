@@ -34,7 +34,7 @@ class ConnectScanner(asyncore.dispatcher):
         if self.probe is None:
             self.do_next()
         else:
-            self.results[self.host][self.port]['probe'] = self.probe
+            self.results[self.host][self.port]["probe"] = self.probe
 
     def handle_read(self):
         if self.probe is not None:
@@ -66,5 +66,5 @@ def scan(hosts, ports, parallelism=256):
     return results
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     scan(["127.0.0.1"], range(1, 1024), 256)
