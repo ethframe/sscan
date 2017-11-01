@@ -8,9 +8,9 @@ from collections import defaultdict
 
 class ConnectScanner(asyncore.dispatcher):
     probes = {
-        80: "GET / HTTP/1.0\r\n\r\n",
-        21: "LIST\r\n",
-        23: "",
+        80: b"GET / HTTP/1.0\r\n\r\n",
+        21: b"LIST\r\n",
+        23: b"",
     }
 
     def __init__(self, targets, results):
@@ -21,7 +21,7 @@ class ConnectScanner(asyncore.dispatcher):
 
     def fire(self):
         try:
-            self.host, self.port = self.targets.next()
+            self.host, self.port = next(self.targets)
             self.probe = ConnectScanner.probes.get(self.port, None)
             self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
             self.connect((self.host, self.port))
@@ -29,7 +29,7 @@ class ConnectScanner(asyncore.dispatcher):
             pass
 
     def handle_connect(self):
-        print "open: %s:%d" % (self.host, self.port)
+        print("open: %s:%d" % (self.host, self.port))
         self.results[self.host][self.port]["open"] = True
         if self.probe is None:
             self.do_next()
@@ -38,8 +38,8 @@ class ConnectScanner(asyncore.dispatcher):
 
     def handle_read(self):
         if self.probe is not None:
-            reply = self.recv(128).encode("string-escape")
-            print "reply: %s:%d\n\t%s" % (self.host, self.port, reply)
+            reply = self.recv(128).decode("unicode_escape")
+            print("reply: %s:%d\n\t%r" % (self.host, self.port, reply))
             self.results[self.host][self.port]["reply"] = reply
             self.do_next()
 
