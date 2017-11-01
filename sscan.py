@@ -47,12 +47,11 @@ class ConnectScanner(asyncore.dispatcher):
         if self.probe is not None:
             self.probe = self.probe[self.send(self.probe):]
 
-    def handle_close(self):
-        self.do_next()
-
     def do_next(self):
         self.close()
         self.fire()
+
+    handle_close = handle_error = do_next
 
 
 def scan(hosts, ports, parallelism=256):
